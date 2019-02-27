@@ -6,7 +6,7 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 19:07:34 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/02/23 16:32:33 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/02/27 22:13:49 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,23 @@
 
 void	struct_initial(t_union **my_union, char *res)
 {
-	if (((*my_union) = (t_union*)malloc(sizeof(t_union) * 1)))
+	if ((uptr = (t_union*)malloc(sizeof(t_union) * 1)))
 	{
-		(*my_union)->size = 50;
-		(*my_union)->win_x = 1920;
-		uptr->shift_x = 10;
-		uptr->shift_y = 10;
-		(*my_union)->win_y = 1080;
-		(*my_union)->mlx_ptr = mlx_init();
-		(*my_union)->win_ptr = mlx_new_window((*my_union)->mlx_ptr,
-				(*my_union)->win_x, (*my_union)->win_y, "fdf");
-		if (!grid_valid(&my_union, res, &((*my_union)->grid_size_x), &((*my_union)->grid_size_y)))
+		uptr->win_x = 1920;
+		uptr->win_y = 1080;
+		uptr->shift_x = 0;
+		uptr->shift_y = 0;
+		uptr->x_angle = 0;
+		uptr->y_angle = 0;
+		uptr->kof = 2;
+		uptr->z_angle = 0;
+		uptr->mode = 'f';
+		uptr->mlx_ptr = mlx_init();
+		uptr->win_ptr = mlx_new_window(uptr->mlx_ptr,
+				uptr->win_x, uptr->win_y, "fdf");
+		if (!grid_valid(&my_union, res, &(uptr->grid_size_x), &(uptr->grid_size_y)))
 			exit_(&my_union);
+		uptr->scale = calc_scale(my_union);
 		copy2trans(my_union);
 	}
 	else
