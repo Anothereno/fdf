@@ -6,13 +6,13 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 15:04:53 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/02/26 19:45:47 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/02/27 17:14:05 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-/*void	main_loop(t_union **my_union)
+void	main_loop(t_union **my_union)
 {
 	int i;
 	int j;
@@ -23,69 +23,33 @@
 		j = -1;
 		while (++j < uptr->grid_size_x)
 		{
-
-		}
-	}
-}*/
-
-void	reshift(t_union **my_union)
-{
-	int i;
-	int j;
-
-	i = -1;
-	while (++i < uptr->grid_size_y)
-	{
-		j = -1;
-		while (++j < uptr->grid_size_x)
-		{
-			uptr->transform[i][j].x = uptr->transform[i][j].x
-									  - uptr->win_x / 4 - uptr->shift_x;
-			uptr->transform[i][j].y = uptr->transform[i][j].y
-									  - uptr->win_y / 4 - uptr->shift_y;
+			if (uptr->mode != 'i')
+			{
+				sub_coordinates(my_union, i, j);
+				rotate_all_axis(my_union, i, j);
+			}
+			shift_coordinates(my_union, i, j);
 		}
 	}
 }
 
-void	shift_coordinates(t_union **my_union)
+void	sub_coordinates(t_union **my_union, int i, int j)
 {
-	int i;
-	int j;
-
-	i = -1;
-	while (++i < uptr->grid_size_y)
-	{
-		j = -1;
-		while (++j < uptr->grid_size_x)
-		{
-			uptr->transform[i][j].x = uptr->transform[i][j].x
-					+ uptr->win_x / 4 + uptr->shift_x;
-			uptr->transform[i][j].y = uptr->transform[i][j].y
-					+ uptr->win_y / 4 + uptr->shift_y;
-		}
-	}
+	uptr->transform[i][j].x = uptr->transform[i][j].x * uptr->scale
+			- ((uptr->grid_size_x * uptr->scale) / 2);
+	uptr->transform[i][j].y = uptr->transform[i][j].y * uptr->scale
+			- ((uptr->grid_size_y * uptr->scale) / 2);
+	uptr->transform[i][j].z = uptr->transform[i][j].z * uptr->scale;
 }
 
-void	resize_coordinates(t_union **my_union, int old_size)
+void	shift_coordinates(t_union **my_union, int i, int j)
 {
-	int i;
-	int j;
-
-	i = -1;
-	while (++i < uptr->grid_size_y)
-	{
-		j = -1;
-		while (++j < uptr->grid_size_x)
-		{
-			uptr->points[i][j].x = uptr->points[i][j].x
-					* uptr->size / old_size;
-			uptr->points[i][j].y = uptr->points[i][j].y
-					* uptr->size / old_size;
-			uptr->points[i][j].z = uptr->points[i][j].z
-					* uptr->size / old_size;
-		}
-	}
+	uptr->transform[i][j].x = uptr->transform[i][j].x
+			+ uptr->win_x / 2 + uptr->shift_x;
+	uptr->transform[i][j].y = uptr->transform[i][j].y
+			+ uptr->win_y / 2 + uptr->shift_y;
 }
+
 
 void	plot_grid(t_union *my_union)
 {
@@ -94,9 +58,9 @@ void	plot_grid(t_union *my_union)
 
 	i = -1;
 	mlx_clear_window(my_union->mlx_ptr, my_union->win_ptr);
-	if (my_union->mode != 'i')
+	if (uptr.mode != 'i')
 		copy2trans(&my_union);
-	shift_coordinates(&my_union);
+	main_loop(&my_union);
 	while (++i < (my_union)->grid_size_y)
 	{
 		j = -1;
@@ -160,7 +124,7 @@ void	plot_line(int x0, int y0, int  x1,int  y1, t_union *my_union)
 	curx = x0;
 	cury = y0;
 	error = longline / 2;
-	mlx_pixel_put(my_union->mlx_ptr, my_union->win_ptr, curx, cury, 0xFFFFFF);
+	mlx_pixel_put(my_union->mlx_ptr, my_union->win_ptr, curx, cury, 0xa02baf);
 	i = -1;
 	while (++i < longline)
 	{
@@ -176,6 +140,6 @@ void	plot_line(int x0, int y0, int  x1,int  y1, t_union *my_union)
 			curx += inclinex;
 			cury += incliney;
 		}
-		mlx_pixel_put(my_union->mlx_ptr, my_union->win_ptr, curx, cury, 0xFFFFFF);
+		mlx_pixel_put(my_union->mlx_ptr, my_union->win_ptr, curx, cury, 0xa02baf);
 	}
 }

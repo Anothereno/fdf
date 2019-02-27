@@ -6,11 +6,21 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 17:07:27 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/02/23 16:00:26 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/02/27 15:37:27 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+int 	calc_scale(t_union **my_union)
+{
+	int div_x;
+	int div_y;
+
+	div_x = uptr->win_x / uptr->grid_size_x;
+	div_y = uptr->win_y / uptr->grid_size_y;
+	return (MIN(div_x, div_y));
+}
 
 int		grid_valid(t_union ***my_union, char *grid, int *x, int *y)
 {
@@ -35,16 +45,16 @@ void 	put_point(t_point *point, int i, int j, char *str, int size)
 	tmp = NULL;
 	if (ft_strchr(str, ','))
 		tmp = ft_strsplit(str, ',');
-	(point)->y = (float)i * size;
-	(point)->x = (float)j * size;
+	(point)->y = (float)i;
+	(point)->x = (float)j;
 	if (!tmp)
 	{
-		(point)->z = (float)ft_atoi(str) * size;
+		(point)->z = (float)ft_atoi(str);
 		(point)->color = 0xFFFFFF;
 	}
 	else
 	{
-		(point)->z = (float)ft_atoi(tmp[0]) * size;
+		(point)->z = (float)ft_atoi(tmp[0]);
 		(point)->color = 0xFFFFFF;
 	}
 }
@@ -72,7 +82,7 @@ int 	create_matrix(int x, int y, char **split, t_union ***my_union)
 		j = -1;
 		substring = ft_strsplit(split[i], ' ');
 		while (++j < x)
-			put_point(&points[i][j], i, j, substring[j], (**my_union)->size);
+			put_point(&points[i][j], i, j, substring[j], (**my_union)->scale);
 	}
 	(**my_union)->transform = transform;
 	(**my_union)->points = points;
