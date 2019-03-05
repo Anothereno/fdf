@@ -6,7 +6,7 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 14:51:07 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/02/27 22:24:46 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/03/05 16:02:48 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,23 @@
 # include <math.h>
 # include "libft/libft.h"
 # include <fcntl.h>
+# include <stdlib.h>
 # include <string.h>
 
 typedef struct	s_point
 {
-	int x;
-	int y;
-	int z;
-	int color;
+	int			x;
+	int			y;
+	int			z;
+	int			true_z;
+	long int	color;
 }				t_point;
 
 typedef struct	s_union
 {
+	void	*image_ptr;
 	void	*mlx_ptr;
+	char	*image_data;
 	void	*win_ptr;
 	int 	scale;
 	int		win_x;
@@ -51,6 +55,11 @@ typedef struct	s_union
 	t_point	**transform;
 }				t_union;
 
+int 			take_color(int start, int finish, double perc);
+double			percent(int start, int finish, int point);
+void			set_pixel(t_union **my_union, int x, int y);
+void			image_init(t_union **my_union);
+int 			set_color(t_point point0, t_point point1, int curx, int cury, char w);
 int 			calc_scale(t_union **my_union);
 void			change_mode(t_union *my_union, char c);
 void			sub_coordinates(t_union **my_union, int i, int j);
@@ -64,19 +73,15 @@ void			rotate_all_axis(t_union **my_union, int i, int j);
 void			shift_coordinates(t_union **my_union, int i, int j);
 void			shift_x(int key, t_union *my_union);
 void			shift_y(int key, t_union *my_union);
-void			copy2trans(t_union **my_union);
 void			zoom(int key, t_union *my_union);
-void			trans_iso(t_union *my_union);
-void			isometric(int *x, int *y, int z, t_union *my_union);
+void			isometric(int i, int j, t_union *my_union);
 int 			create_matrix(int x, int y, char **coordinates, t_union ***my_union);
 void			exit_(t_union *my_union);
-int				mouse_press(int key, void *param);
 void			plot_grid(t_union *my_union);
-int 			mouse_move(int key, void *param);
 int				grid_valid(t_union ***my_union, char *grid, int *x, int *y);
 int				deal_key(int key, void *param);
 int				take_sign(int x);
-void			plot_line(int x0, int y0, int  x1, int  y1, t_union *my_union);
+void			plot_line(t_point point0, t_point point1, t_union *my_union);
 char			*take_coordinates(char *argv);
 char			*reading(int fd);
 void			struct_initial(t_union **my_union, char *res);
