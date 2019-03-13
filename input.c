@@ -6,7 +6,7 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 19:07:34 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/03/04 17:33:38 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/03/07 17:44:43 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,66 +14,79 @@
 
 void	struct_initial(t_union **my_union, char *res)
 {
-	if ((uptr = (t_union*)malloc(sizeof(t_union) * 1)))
+	if ((UPTR = (t_union*)malloc(sizeof(t_union) * 1)))
 	{
-		uptr->win_x = 1920;
-		uptr->win_y = 1080;
-		uptr->shift_x = 0;
-		uptr->shift_y = 0;
-		uptr->x_angle = 0;
-		uptr->y_angle = 0;
-		uptr->kof = 2;
-		uptr->z_angle = 0;
-		uptr->mode = 'f';
-		uptr->mlx_ptr = mlx_init();
+		UPTR->win_x = 1920;
+		UPTR->win_y = 1080;
+		UPTR->shift_x = 0;
+		UPTR->shift_y = 0;
+		UPTR->x_angle = 0;
+		UPTR->y_angle = 0;
+		UPTR->kof = 2;
+		UPTR->z_angle = 0;
+		UPTR->mode = 'f';
+		UPTR->mlx_ptr = mlx_init();
 		image_init(my_union);
-		uptr->win_ptr = mlx_new_window(uptr->mlx_ptr,
-				uptr->win_x, uptr->win_y, "fdf");
-		if (!grid_valid(&my_union, res, &(uptr->grid_size_x), &(uptr->grid_size_y)))
+		UPTR->win_ptr = mlx_new_window(UPTR->mlx_ptr,
+				UPTR->win_x, UPTR->win_y, "fdf");
+		if (!grid_valid(&my_union, res,
+				&(UPTR->grid_size_x), &(UPTR->grid_size_y)))
 			exit_(&my_union);
-		uptr->scale = calc_scale(my_union);
+		UPTR->scale = calc_scale(my_union);
 	}
 	else
-		exit (0);
+		exit(0);
 }
 
 void	image_init(t_union **my_union)
 {
-	int	bits;
-	int width;
-	int flag;
-
-	uptr->image_ptr = mlx_new_image(uptr->mlx_ptr, uptr->win_x, uptr->win_y);
-	uptr->image_data = mlx_get_data_addr(uptr->image_ptr, &bits, &width, &flag);
+	UPTR->image_ptr = mlx_new_image(UPTR->mlx_ptr,
+			UPTR->win_x, UPTR->win_y);
+	UPTR->image_data = mlx_get_data_addr(UPTR->image_ptr,
+			&(UPTR->bpp), &(UPTR->sl), &(UPTR->endian));
 }
 
-char 	*take_coordinates(char *argv)
+void	image_put(t_union **my_union)
+{
+	mlx_put_image_to_window(UPTR->mlx_ptr,
+			UPTR->win_ptr, UPTR->image_ptr, 0, 0);
+	mlx_destroy_image(UPTR->mlx_ptr, UPTR->image_ptr);
+}
+
+char	*take_coordinates(char *argv)
 {
 	int		fd;
+	int		fnamelen;
 
-	if ((fd = open(argv, O_RDONLY)) < 3)
-	{
-		ft_putstr("Can't open the file\n");
-		exit(0);
-	}
+	fnamelen = ft_strlen(argv);
+	if ((fd = open(argv, O_RDONLY)) < 3 || argv[fnamelen - 4] != '.' ||
+		argv[fnamelen - 3] != 'f' || argv[fnamelen - 2] != 'd' ||
+		argv[fnamelen - 1] != 'f')
+		print_error("Can't open the file or filename wrong\n", NULL);
 	else
 		return (reading(fd));
 }
 
-char 	*reading(int fd)
+char	*reading(int fd)
 {
 	char	buff[1000001];
 	char	*res;
 	char	*tmp;
-	int 	ret;
+	int		ret;
 
 	res = ft_strdup("");
-	while ((ret = read(fd, buff, 1000000)))
+	if (read(fd, NULL, 0) >= 0)
 	{
-		buff[ret] = '\0';
-		tmp = res;
-		res = ft_strjoin((const char *)res, (const char *)buff);
-		ft_strdel(&tmp);
+		while ((ret = read(fd, buff, 1000000)))
+		{
+			buff[ret] = '\0';
+			tmp = res;
+			res = ft_strjoin((const char *)res, (const char *)buff);
+			ft_strdel(&tmp);
+		}
+		close(fd);
+		return (res);
 	}
-	return (res);
+	else
+		print_error("Wrong file\n", NULL);
 }

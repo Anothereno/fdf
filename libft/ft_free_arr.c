@@ -14,19 +14,18 @@
 
 void	*ft_free_arr(void ***arr, unsigned long z)
 {
-	z--;
-	while (z > 0)
+	if (*arr)
 	{
-		if (*arr[z])
+		while (--z >= 0)
 		{
-			free(*arr[z]);
-			*arr[z] = NULL;
+			if (*arr[z])
+			{
+				free(*arr[z]);
+				*arr[z] = NULL;
+			}
 		}
-		z--;
+		free(*arr);
+		*arr = NULL;
 	}
-	free(*arr[z]);
-	*arr[z] = NULL;
-	free(*arr);
-	*arr = NULL;
-	return (NULL);
+	return (*arr);
 }
